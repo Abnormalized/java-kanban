@@ -1,3 +1,7 @@
+package Tasks;
+
+import Helper.Manager;
+
 public class Task {
 
     public final int id;
@@ -13,7 +17,7 @@ public class Task {
     }
     @Override
     public String toString() {
-        return "Task{" +
+        return "Tasks.Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

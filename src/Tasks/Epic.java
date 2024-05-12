@@ -1,4 +1,7 @@
+package Tasks;
+
 import java.util.HashMap;
+import Helper.Manager;
 
 public class Epic extends Task{
 
