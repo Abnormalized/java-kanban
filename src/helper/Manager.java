@@ -1,7 +1,6 @@
-package Helper;
+package helper;
 
-import Tasks.Epic;
-import Tasks.Task;
+import tasks.*;
 
 import java.util.HashMap;
 

@@ -1,6 +1,6 @@
-package Tasks;
+package tasks;
 
-import Helper.Manager;
+import helper.Manager;
 
 public class Task {
 
