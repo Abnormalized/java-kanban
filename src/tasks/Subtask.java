@@ -1,21 +1,24 @@
 package tasks;
 
-public class Subtask extends Epic{
-    Epic epicOfThisSubtask;
+import manager.TaskManager;
 
-    public Subtask(String name, String description, Epic epicOfThisSubtask) {
-        super(name, description);
-        this.epicOfThisSubtask = epicOfThisSubtask;
+public class Subtask extends Task{
+
+    final long epicId;
+
+    public Subtask(String name, String description, Status status, TaskManager taskManager, long epicId) {
+        super(name, description, status, taskManager);
+        this.epicId = epicId;
     }
 
+    @Override
     public void setStatus(Status status) {
         super.setStatus(status);
         try {
-            epicOfThisSubtask.updateEpicStatus();
+            taskManager.getEpicsList().get(epicId).updateStatus();
         } catch (NullPointerException e) {
 
         }
     }
-
 
 }

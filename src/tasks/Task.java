@@ -1,20 +1,26 @@
 package tasks;
 
-import helper.Manager;
+import manager.TaskManager;
+
+import java.util.Objects;
 
 public class Task {
 
-    public final int id;
+    private final long id;
     private String name;
     private String description;
     private Status status;
 
-    public Task(String name, String description) {
+    public final TaskManager taskManager;
+
+    public Task(String name, String description, Status status, TaskManager taskManager) {
         this.name = name;
         this.description = description;
-        this.id = Manager.getNextFreeId();
-        setStatus(Status.NEW);
+        this.taskManager = taskManager;
+        this.id = taskManager.assignId();
+        this.setStatus(status);
     }
+
     @Override
     public String toString() {
         return "Tasks.Task{" +
@@ -23,6 +29,18 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    public void show() {
+        taskManager.getHistoryManager().add(this);
+        System.out.println(name + " [" + getStatus() + "]");
+        if (!Objects.equals(getDescription(), "")) {
+            System.out.println(description);
+        }
+    }
+
+    public long getId() {
+        return id;
     }
 
     public Status getStatus() {
@@ -48,7 +66,4 @@ public class Task {
     public void setDescription(String description) {
         this.description = description;
     }
-
-
-
 }
