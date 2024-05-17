@@ -16,6 +16,8 @@ public class Subtask extends Task{
         super.setStatus(status);
         if (!taskManager.getEpicsList().get(epicId).getMapOfSubtasks().isEmpty()) {
             taskManager.getEpicsList().get(epicId).updateStatus();
+        } else {
+            System.out.println("У этого эпика нет подзадач");
         }
     }
 
