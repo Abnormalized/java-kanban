@@ -14,10 +14,8 @@ public class Subtask extends Task{
     @Override
     public void setStatus(Status status) {
         super.setStatus(status);
-        try {
+        if (!taskManager.getEpicsList().get(epicId).getMapOfSubtasks().isEmpty()) {
             taskManager.getEpicsList().get(epicId).updateStatus();
-        } catch (NullPointerException e) {
-
         }
     }
 
