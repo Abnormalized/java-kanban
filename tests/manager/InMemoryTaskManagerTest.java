@@ -65,4 +65,17 @@ class InMemoryTaskManagerTest {
                 "Удалось найти задачу, которая должна была быть удалена");
 
     }
+
+    @Test
+    void noSubtasksIdsIntoEpicAfterSubtaskDelete() {
+        TaskManager manager = Managers.getDefault();
+        Epic epic = manager.createEpic("test epic");
+        Subtask testedSubtask = epic.addSubtask("Subtask test 1");
+        epic.addSubtask("Subtask test 2");
+
+        Long targetId = testedSubtask.getId();
+        manager.deleteTaskById(targetId);
+        
+        Assertions.assertFalse(epic.getMapOfSubtasks().containsKey(targetId));
+    }
 }
