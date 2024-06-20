@@ -48,7 +48,7 @@ class InMemoryTaskManagerTest {
         manager.createTask("test");
         Assertions.assertNotEquals(manager.getMapOfTasks().size(), 0,
                 "mapOfTasks остается пустным при добавлении новых задач");
-        manager.eraseMapOfTasks();
+        manager.clear();
         Assertions.assertEquals(manager.getMapOfTasks().size(), 0,
                 "mapOfTasks не обнулился");
     }

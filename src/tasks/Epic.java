@@ -6,10 +6,11 @@ import manager.TaskManager;
 
 public class Epic extends Task{
 
-    HashMap<Long, Subtask> mapOfSubtasks = new HashMap<>();
+    HashMap<Long, Subtask> mapOfSubtasks;
 
     public Epic(String name, String description, Status status, TaskManager taskManager) {
         super(name, description, status, taskManager);
+        mapOfSubtasks = new HashMap<>();
     }
 
     @Override
@@ -59,7 +60,6 @@ public class Epic extends Task{
         Subtask subtask = new Subtask(name, "", Status.NEW, taskManager, this.getId());
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
-        taskManager.getSubtasksList().put(subtask.getId(), subtask);
         return subtask;
     }
 
@@ -67,7 +67,6 @@ public class Epic extends Task{
         Subtask subtask = new Subtask(name, description, Status.NEW, taskManager, this.getId());
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
-        taskManager.getSubtasksList().put(subtask.getId(), subtask);
         return subtask;
     }
 
@@ -75,7 +74,6 @@ public class Epic extends Task{
         Subtask subtask = new Subtask(name, description, status, taskManager, this.getId());
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
-        taskManager.getSubtasksList().put(subtask.getId(), subtask);
         return subtask;
     }
 

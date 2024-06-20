@@ -18,7 +18,7 @@ public class Task {
         this.description = description;
         this.taskManager = taskManager;
         this.id = taskManager.assignId();
-        this.setStatus(status);
+        this.status = status;
     }
 
     @Override
@@ -65,5 +65,19 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
+                status == task.status && Objects.equals(taskManager, task.taskManager);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
