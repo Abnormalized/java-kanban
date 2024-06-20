@@ -87,6 +87,7 @@ class InMemoryHistoryManagerTest {
             }
         }
 
-        assertTrue(test, "Неправильная очередность в истории historyManager");
+        assertTrue(test, "метод getHistory класса HistoryManager возвращает задачи не в порядке " +
+                "последовательности запросов к ним.");
     }
 }

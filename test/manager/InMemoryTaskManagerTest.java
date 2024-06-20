@@ -76,6 +76,7 @@ class InMemoryTaskManagerTest {
         Long targetId = testedSubtask.getId();
         manager.deleteTaskById(targetId);
 
-        Assertions.assertFalse(epic.getMapOfSubtasks().containsKey(targetId));
+        Assertions.assertFalse(epic.getMapOfSubtasks().containsKey(targetId), "Внутри эпика остаются записи " +
+                "неактуальных id подзадач, которые были же удалены");
     }
 }
