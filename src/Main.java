@@ -52,7 +52,7 @@ public class Main {
         printAllTasks(manager);
     }
 
-    private static void testMenu(TaskManager manager){
+    private static void testMenu(TaskManager manager) {
         while (true) {
             System.out.println("1) Создать задачу");
             System.out.println("2) Посмотреть задачу по ид");
