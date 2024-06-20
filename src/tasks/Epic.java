@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import manager.TaskManager;
 
-public class Epic extends Task{
+public class Epic extends Task {
 
     HashMap<Long, Subtask> mapOfSubtasks;
 
@@ -50,7 +50,7 @@ public class Epic extends Task{
             }
             if (isThereNew) {
                 setStatus(Status.NEW);
-            } else if (isThereDone){
+            } else if (isThereDone) {
                 setStatus(Status.DONE);
             }
         }

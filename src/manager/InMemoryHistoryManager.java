@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager{
+public class InMemoryHistoryManager implements HistoryManager {
 
     private final Node headNode = new Node(null, null, null);
     private final Node tailNode = new Node(null, null, headNode);
@@ -34,7 +34,7 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public void clear(){
+    public void clear() {
         historyMap.clear();
     }
 

@@ -16,7 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public long assignId(){
+    public long assignId() {
         return nextFreeId++;
     }
 

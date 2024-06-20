@@ -62,15 +62,15 @@ public class Main {
 
             String command = scanner.nextLine();
 
-            if(Objects.equals(command, "1")) {
+            if (Objects.equals(command, "1")) {
                 System.out.println("Введите имя задачи");
                 manager.createTask(scanner.nextLine());
-            } else if(Objects.equals(command, "2")) {
+            } else if (Objects.equals(command, "2")) {
                 System.out.print("Введите id задачи: ");
                 manager.getMapOfTasks().get(scanner.nextLong()).show();
-            } else if(Objects.equals(command, "3")) {
+            } else if (Objects.equals(command, "3")) {
                 showHistory(manager);
-            } else if(Objects.equals(command, "0")) {
+            } else if (Objects.equals(command, "0")) {
                 System.exit(0);
             }
         }
