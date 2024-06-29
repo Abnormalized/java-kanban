@@ -11,6 +11,10 @@ public interface HistoryManager {
 
     void add(Task task);
 
+    void remove(long id);
+
+    void clear();
+
     List<Task> getHistory();
 
 }

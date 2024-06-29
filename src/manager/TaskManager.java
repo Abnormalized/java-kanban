@@ -7,6 +7,8 @@ public interface TaskManager {
 
     long assignId();
 
+    long getNextFreeId();
+
     Task createTask(String name);
 
     Task createTask(String name, String description);
@@ -23,17 +25,9 @@ public interface TaskManager {
 
     Task getTaskById(long id);
 
-    Epic getEpicById(long id);
-
-    void eraseMapOfTasks();
-
     void deleteTaskById(long id);
 
-    HashMap<Long, Task> getTasksList();
-
-    HashMap<Long, Epic> getEpicsList();
-
-    HashMap<Long, Subtask> getSubtasksList();
-
     HistoryManager getHistoryManager();
+
+    void clear();
 }

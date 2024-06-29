@@ -48,7 +48,7 @@ class InMemoryTaskManagerTest {
         manager.createTask("test");
         Assertions.assertNotEquals(manager.getMapOfTasks().size(), 0,
                 "mapOfTasks остается пустным при добавлении новых задач");
-        manager.eraseMapOfTasks();
+        manager.clear();
         Assertions.assertEquals(manager.getMapOfTasks().size(), 0,
                 "mapOfTasks не обнулился");
     }
@@ -64,5 +64,19 @@ class InMemoryTaskManagerTest {
         Assertions.assertNull(manager.getTaskById(taskId),
                 "Удалось найти задачу, которая должна была быть удалена");
 
+    }
+
+    @Test
+    void noSubtasksIdsIntoEpicAfterSubtaskDelete() {
+        TaskManager manager = Managers.getDefault();
+        Epic epic = manager.createEpic("test epic");
+        Subtask testedSubtask = epic.addSubtask("Subtask test 1");
+        epic.addSubtask("Subtask test 2");
+
+        Long targetId = testedSubtask.getId();
+        manager.deleteTaskById(targetId);
+
+        Assertions.assertFalse(epic.getMapOfSubtasks().containsKey(targetId), "Внутри эпика остаются записи " +
+                "неактуальных id подзадач, которые были же удалены");
     }
 }
