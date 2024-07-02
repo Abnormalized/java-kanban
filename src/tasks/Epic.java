@@ -10,6 +10,12 @@ public class Epic extends Task {
 
     public Epic(String name, String description, Status status, TaskManager taskManager) {
         super(name, description, status, taskManager);
+        this.type = Type.EPIC;
+        mapOfSubtasks = new HashMap<>();
+    }
+
+    protected Epic(long id, Type type, String name, Status status, String description, TaskManager taskManager) {
+        super(id, Type.TASK, name, status, description, taskManager);
         mapOfSubtasks = new HashMap<>();
     }
 
