@@ -20,7 +20,7 @@ public class Managers {
                 System.out.println("Файл с задачами не найден. Создаю...");
                 manager = new FileBackedTaskManager(getDefaultHistory(), file);
             } else {
-                System.out.println("Найден файл с задачами. Загражаю...");
+                System.out.println("Найден файл с задачами. Загружаю...");
                 manager = FileBackedTaskManager.loadFromFile(file);
             }
         } catch (IOException exception) {
