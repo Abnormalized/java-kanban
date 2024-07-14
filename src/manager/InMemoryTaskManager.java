@@ -9,7 +9,7 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Long, Task> mapOfAllTasks = new HashMap<>();
 
     HistoryManager historyManager;
-    private long nextFreeId = 0;
+    protected long nextFreeId = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.historyManager = historyManager;
@@ -27,16 +27,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task createTask(String name) {
-        Task task = new Task(name, "", Status.NEW, this);
-        mapOfAllTasks.put(task.getId(), task);
-        return task;
+        return createTask(name, "", Status.NEW);
     }
 
     @Override
     public Task createTask(String name, String description) {
-        Task task = new Task(name, description, Status.NEW, this);
-        mapOfAllTasks.put(task.getId(), task);
-        return task;
+        return createTask(name, description, Status.NEW);
     }
 
     @Override
@@ -48,16 +44,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic createEpic(String name) {
-        Epic epic = new Epic(name, "", Status.NEW, this);
-        mapOfAllTasks.put(epic.getId(), epic);
-        return epic;
+        return createEpic(name, "", Status.NEW);
     }
 
     @Override
     public Epic createEpic(String name, String description) {
-        Epic epic = new Epic(name, description, Status.NEW, this);
-        mapOfAllTasks.put(epic.getId(), epic);
-        return epic;
+        return createEpic(name, description, Status.NEW);
     }
 
     @Override
@@ -65,6 +57,21 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = new Epic(name, description, status, this);
         mapOfAllTasks.put(epic.getId(), epic);
         return epic;
+    }
+
+    @Override
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name) {
+        return createSubtask(epicOfThisSubtask, name, "", Status.NEW);
+    }
+
+    @Override
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description) {
+        return createSubtask(epicOfThisSubtask, name, description, Status.NEW);
+    }
+
+    @Override
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description, Status status) {
+        return epicOfThisSubtask.addSubtask(name, description, status);
     }
 
     @Override
@@ -114,5 +121,4 @@ public class InMemoryTaskManager implements TaskManager {
         mapOfAllTasks.clear();
         historyManager.clear();
     }
-
 }

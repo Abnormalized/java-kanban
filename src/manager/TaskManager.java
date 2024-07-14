@@ -21,6 +21,12 @@ public interface TaskManager {
 
     Epic createEpic(String name, String description, Status status);
 
+    Subtask createSubtask(Epic epicOfThisSubtask, String name);
+
+    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description);
+
+    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description, Status status);
+
     HashMap<Long, Task> getMapOfTasks();
 
     Task getTaskById(long id);

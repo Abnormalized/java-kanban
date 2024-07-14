@@ -1,13 +1,17 @@
 import manager.*;
 import tasks.*;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = Managers.getDefault();
+        File file = Paths.get("data.csv").toFile();
+        TaskManager manager = Managers.getFileManager(file);
+        System.out.println("Загружено:");
+        printAllTasks(manager);
         manualScene(manager);
     }
 
@@ -22,34 +26,6 @@ public class Main {
         manager.createEpic("Epic 2", "Description of epic 2");
         printAllTasks(manager);
         showHistory(manager);
-
-        Random random = new Random();
-
-        System.out.println("Просматриваем 3 случайные задачи");
-        for (int i = 0; i < 3; i++) {
-            long randomNum = random.nextLong(manager.getNextFreeId());
-            Task task = manager.getMapOfTasks().get(randomNum);
-            task.show();
-            showHistory(manager);
-        }
-
-        System.out.println("---------------");
-        System.out.println("Тест на удаление эпика с подзадачами:");
-        epic.show();
-        System.out.println("Удаление: " + epic.getName());
-        manager.deleteTaskById(epic.getId());
-        showHistory(manager);
-        System.out.println("Новый вывод: ");
-        printAllTasks(manager);
-
-        System.out.println("---------------");
-        System.out.println("Тест на удаление случайно задачи:");
-        int[] possibleTasks = {0, 1, 6};
-        int randomId = random.nextInt(possibleTasks.length);
-        System.out.println("Удаление: " + manager.getTaskById(possibleTasks[randomId]).getName());
-        manager.deleteTaskById(possibleTasks[randomId]);
-        showHistory(manager);
-        printAllTasks(manager);
     }
 
     private static void testMenu(TaskManager manager) {

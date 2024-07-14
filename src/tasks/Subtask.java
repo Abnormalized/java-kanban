@@ -8,8 +8,15 @@ public class Subtask extends Task {
 
     public Subtask(String name, String description, Status status, TaskManager taskManager, long epicId) {
         super(name, description, status, taskManager);
+        this.type = Type.SUBTASK;
         this.epicId = epicId;
         this.setStatus(status);
+    }
+
+    protected Subtask(long id, Type type, String name, Status status, String description,
+                      long epicId, TaskManager taskManager) {
+        super(id, Type.TASK, name, status, description, taskManager);
+        this.epicId = epicId;
     }
 
     @Override
@@ -22,5 +29,10 @@ public class Subtask extends Task {
 
     public long getEpicId() {
         return epicId;
+    }
+
+    @Override
+    public String toStringForSave() {
+        return super.toStringForSave() + "," + epicId;
     }
 }
