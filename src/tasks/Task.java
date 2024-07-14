@@ -1,6 +1,6 @@
 package tasks;
 
-import exception.NotSuitableTimeBoundException;
+import exception.TimeOverlapException;
 import manager.FileBackedTaskManager;
 import manager.TaskManager;
 
@@ -170,7 +170,7 @@ public class Task {
             boolean isOverlaps = taskManager.isTimeBoundsOverlaps(startTime, duration,
                     task.getStartTime(), task.getDuration());
             if (isOverlaps && !(task.equals(this))) {
-                throw new NotSuitableTimeBoundException("Заданные временные рамки пересекаются" +
+                throw new TimeOverlapException("Заданные временные рамки пересекаются" +
                         " с временными рамками другой задачи.");
             }
         }

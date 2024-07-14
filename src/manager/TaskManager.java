@@ -43,6 +43,6 @@ public interface TaskManager {
 
     TreeSet<Task> getPrioritizedTasks();
 
-    boolean isTimeBoundsOverlaps(LocalDateTime start1, Duration d1,
-                                 LocalDateTime start2, Duration d2);
+    boolean isTimeBoundsOverlaps(LocalDateTime firstTaskStartDate, Duration firstTaskDuration,
+                                 LocalDateTime secondTaskStartDate, Duration secondTaskDuration);
 }

@@ -1,7 +1,7 @@
 package manager;
 
 import static org.junit.jupiter.api.Assertions.*;
-import exception.NotSuitableTimeBoundException;
+import exception.TimeOverlapException;
 import org.junit.jupiter.api.*;
 import java.io.File;
 import java.io.IOException;
@@ -103,21 +103,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void SchedulesDoesOverlap() {
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Task task1 = manager.createTask("test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));
             Task task2 = manager.createTask("test",
                     LocalDateTime.of(2024, 1, 1, 11, 00), Duration.ofHours(2));
         }, "Пересечение временных рамок задач не приводит к исключению.");
 
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Task task2 = manager.createTask("test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));
             Task task1 = manager.createTask("test",
                     LocalDateTime.of(2024, 1, 1, 11, 00), Duration.ofHours(2));
         }, "Пересечение временных рамок задач не приводит к исключению.");
 
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Epic epic = manager.createEpic("Epic");
             Subtask sub1 = manager.createSubtask(epic, "test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));
@@ -125,7 +125,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                     LocalDateTime.of(2024, 1, 1, 11, 00), Duration.ofHours(2));
         }, "Пересечение временных рамок подзадач не приводит к исключению.");
 
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Epic epic = manager.createEpic("Epic");
             Subtask sub2 = manager.createSubtask(epic, "test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));
@@ -133,7 +133,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                     LocalDateTime.of(2024, 1, 1, 11, 00), Duration.ofHours(2));
         }, "Пересечение временных рамок подзадач не приводит к исключению.");
 
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Epic epic = manager.createEpic("Epic");
             Subtask sub1 = manager.createSubtask(epic, "test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));
@@ -141,7 +141,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                     LocalDateTime.of(2024, 1, 1, 11, 00), Duration.ofHours(2));
         }, "Пересечение временных рамок задачи и подзадачи не приводит к исключению.");
 
-        assertThrows(NotSuitableTimeBoundException.class, () -> {
+        assertThrows(TimeOverlapException.class, () -> {
             Epic epic = manager.createEpic("Epic");
             Task task1 = manager.createTask("test",
                     LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(2));

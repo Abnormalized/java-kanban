@@ -84,7 +84,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
     }
 
     @Test
-    void noSubtasksIdsIntoEpicAfterSubtaskDelete() {
+    void epicsSubtaskDeleting() {
         Epic epic = manager.createEpic("test epic");
         Subtask testedSubtask = epic.addSubtask("Subtask test 1",
                 LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(1));
@@ -93,7 +93,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<TaskManager> {
         Long targetId = testedSubtask.getId();
         manager.deleteTaskById(targetId);
         Assertions.assertFalse(epic.getMapOfSubtasks().containsKey(targetId),
-                "Внутри эпика остаются записи неактуальных id подзадач, которые были же удалены");
+                "Внутри эпика остаются записи неактуальных id подзадач, которые были уже удалены");
     }
 
     @Test
