@@ -142,10 +142,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean isTimeBoundsOverlaps(LocalDateTime firstTaskStartDate, Duration firstTaskDuration,
                                         LocalDateTime secondTaskStartDate, Duration secondTaskDuration) {
-        LocalDateTime end1 = firstTaskStartDate.plus(firstTaskDuration);
-        LocalDateTime end2 = secondTaskStartDate.plus(secondTaskDuration);
+        LocalDateTime firstTaskEndDate = firstTaskStartDate.plus(firstTaskDuration);
+        LocalDateTime secondTaskEndDate = secondTaskStartDate.plus(secondTaskDuration);
 
-        return ((firstTaskStartDate.isBefore(end2)) && (secondTaskStartDate.isBefore(end1))) ||
-                (secondTaskStartDate.isBefore(end1)) && (firstTaskStartDate.isBefore(end2));
+        return ((firstTaskStartDate.isBefore(secondTaskEndDate)) && (secondTaskStartDate.isBefore(firstTaskEndDate))) ||
+                (secondTaskStartDate.isBefore(firstTaskEndDate)) && (firstTaskStartDate.isBefore(secondTaskEndDate));
     }
 }
