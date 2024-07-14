@@ -2,7 +2,8 @@ package manager;
 
 import tasks.*;
 
-import java.util.HashMap;
+import java.time.*;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -26,18 +27,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(String name) {
-        return createTask(name, "", Status.NEW);
+    public Task createTask(String name, LocalDateTime startTime, Duration duration) {
+        return createTask(name, "", Status.NEW, startTime, duration);
     }
 
     @Override
-    public Task createTask(String name, String description) {
-        return createTask(name, description, Status.NEW);
+    public Task createTask(String name, String description, LocalDateTime startTime,
+                           Duration duration) {
+        return createTask(name, description, Status.NEW, startTime, duration);
     }
 
     @Override
-    public Task createTask(String name, String description, Status status) {
-        Task task = new Task(name, description, Status.NEW, this);
+    public Task createTask(String name, String description, Status status,
+                           LocalDateTime startTime, Duration duration) {
+        Task task = new Task(name, description, Status.NEW, this, startTime, duration);
         mapOfAllTasks.put(task.getId(), task);
         return task;
     }
@@ -60,18 +63,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask createSubtask(Epic epicOfThisSubtask, String name) {
-        return createSubtask(epicOfThisSubtask, name, "", Status.NEW);
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, LocalDateTime startTime,
+                                 Duration duration) {
+        return createSubtask(epicOfThisSubtask, name, "", Status.NEW, startTime, duration);
     }
 
     @Override
-    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description) {
-        return createSubtask(epicOfThisSubtask, name, description, Status.NEW);
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description,
+                                 LocalDateTime startTime, Duration duration) {
+        return createSubtask(epicOfThisSubtask, name, description, Status.NEW, startTime, duration);
     }
 
     @Override
-    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description, Status status) {
-        return epicOfThisSubtask.addSubtask(name, description, status);
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, String description,
+                                 Status status, LocalDateTime startTime, Duration duration) {
+        return epicOfThisSubtask.addSubtask(name, description, status, startTime, duration);
     }
 
     @Override
@@ -120,5 +126,26 @@ public class InMemoryTaskManager implements TaskManager {
     public void clear() {
         mapOfAllTasks.clear();
         historyManager.clear();
+    }
+
+    @Override
+    public TreeSet<Task> getPrioritizedTasks() {
+        final TreeSet<Task> prioritizedTasksSet = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+        for (Task task : mapOfAllTasks.values()) {
+            if (task.getStartTime() != null) {
+                prioritizedTasksSet.add(task);
+            }
+        }
+        return prioritizedTasksSet;
+    }
+
+    @Override
+    public boolean isTimeBoundsOverlaps(LocalDateTime start1, Duration d1,
+                                        LocalDateTime start2, Duration d2) {
+        LocalDateTime end1 = start1.plus(d1);
+        LocalDateTime end2 = start2.plus(d2);
+
+        return ((start1.isBefore(end2)) && (start2.isBefore(end1))) ||
+                (start2.isBefore(end1)) && (start1.isBefore(end2));
     }
 }

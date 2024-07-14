@@ -1,7 +1,9 @@
 package manager;
 
+import java.time.*;
+import java.util.*;
+
 import tasks.*;
-import java.util.HashMap;
 
 public interface TaskManager {
 
@@ -9,11 +11,11 @@ public interface TaskManager {
 
     long getNextFreeId();
 
-    Task createTask(String name);
+    Task createTask(String name, LocalDateTime startTime, Duration duration);
 
-    Task createTask(String name, String description);
+    Task createTask(String name, String description, LocalDateTime startTime, Duration duration);
 
-    Task createTask(String name, String description, Status status);
+    Task createTask(String name, String description, Status status, LocalDateTime startTime, Duration duration);
 
     Epic createEpic(String name);
 
@@ -21,11 +23,13 @@ public interface TaskManager {
 
     Epic createEpic(String name, String description, Status status);
 
-    Subtask createSubtask(Epic epicOfThisSubtask, String name);
+    Subtask createSubtask(Epic epicOfThisSubtask, String name, LocalDateTime startTime, Duration duration);
 
-    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description);
+    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description,
+                          LocalDateTime startTime, Duration duration);
 
-    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description, Status status);
+    Subtask createSubtask(Epic epicOfThisSubtask, String name, String description,
+                          Status status, LocalDateTime startTime, Duration duration);
 
     HashMap<Long, Task> getMapOfTasks();
 
@@ -36,4 +40,9 @@ public interface TaskManager {
     HistoryManager getHistoryManager();
 
     void clear();
+
+    TreeSet<Task> getPrioritizedTasks();
+
+    boolean isTimeBoundsOverlaps(LocalDateTime start1, Duration d1,
+                                 LocalDateTime start2, Duration d2);
 }

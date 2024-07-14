@@ -1,9 +1,13 @@
 package tasks;
 
+import exception.NotSuitableTimeBoundException;
 import manager.FileBackedTaskManager;
 import manager.TaskManager;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.*;
 import java.util.Objects;
 
 public class Task {
@@ -13,7 +17,8 @@ public class Task {
     private String name;
     private String description;
     private Status status;
-
+    private LocalDateTime startTime;
+    private Duration duration;
     public final TaskManager taskManager;
 
     public Task(String name, String description, Status status, TaskManager taskManager) {
@@ -25,7 +30,31 @@ public class Task {
         this.type = Type.TASK;
     }
 
-    protected Task(long id, Type type, String name, Status status, String description, TaskManager taskManager) {
+    public Task(String name, String description, Status status, TaskManager taskManager,
+                LocalDateTime startTime, Duration duration) {
+        this.name = name;
+        this.description = description;
+        this.taskManager = taskManager;
+        this.id = taskManager.assignId();
+        this.status = status;
+        this.type = Type.TASK;
+        setTimeBound(startTime, duration);
+    }
+
+    protected Task(long id, Type type, String name, Status status, String description,
+                   TaskManager taskManager, LocalDateTime startTime, Duration duration) {
+        this.id = id;
+        this.type = type;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.taskManager = taskManager;
+        taskManager.getMapOfTasks().put(id, this);
+        setTimeBound(startTime, duration);
+    }
+
+    protected Task(long id, Type type, String name, Status status, String description,
+                   TaskManager taskManager) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -46,34 +75,41 @@ public class Task {
     }
 
     public String toStringForSave() {
-        return id + "," + type + "," + name + "," + status + "," + description;
+        if (getStartTime() != null) {
+            return String.format(String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
+                    getStartTime().toString(), getDuration().toString()));
+        } else {
+            return String.format(String.format("%s,%s,%s,%s,%s,,", id, type, name, status, description));
+        }
     }
 
-    public static Task fromString(String value, FileBackedTaskManager taskManager) throws IOException {
+    public static void fromString(String value, FileBackedTaskManager taskManager) throws IOException {
         String[] data = value.trim().split(",");
         var id = data[0];
         var name = data[2];
         var status = data[3];
-        String description = null;
-        if (data.length == 5) {
-            description = data[4];
-        } else {
-            description = "";
-        }
+        String description = data[4];
+        LocalDateTime startTime = LocalDateTime.parse(data[5]);
+        Duration duration = Duration.parse(data[6]);
 
         switch (data[1]) {
             case "TASK" -> {
-                return new Task(Long.parseLong(id), Type.TASK, name, Status.toStatus(status),
-                        description, taskManager);
+                Task task = new Task(Long.parseLong(id), Type.TASK, name, Status.toStatus(status),
+                        description, taskManager, startTime, duration);
+                taskManager.getMapOfTasks().put(task.getId(), task);
             }
             case "EPIC" -> {
-                return new Epic(Long.parseLong(id), Type.EPIC, name, Status.toStatus(status),
+                Epic epic = new Epic(Long.parseLong(id), Type.EPIC, name, Status.toStatus(status),
                         description, taskManager);
+                taskManager.getMapOfTasks().put(epic.getId(), epic);
             }
             case "SUBTASK" -> {
-                var epicId = data[5];
-                return new Subtask(Long.parseLong(id), Type.EPIC, name, Status.toStatus(status),
-                        description, Long.parseLong(epicId), taskManager);
+                var epicId = data[data.length - 1];
+                Subtask subtask = new Subtask(Long.parseLong(id), name, Status.toStatus(status),
+                        description, Long.parseLong(epicId), taskManager, startTime, duration);
+                taskManager.getMapOfTasks().put(subtask.getId(), subtask);
+                Epic epic = (Epic) taskManager.getTaskById(Long.parseLong(epicId));
+                epic.getMapOfSubtasks().put(subtask.getId(), subtask);
             }
             default -> {
                 throw new IOException("Ошибка чтения файла! Возможно, файл поврежден.");
@@ -83,9 +119,16 @@ public class Task {
 
     public void show() {
         taskManager.getHistoryManager().add(this);
-        System.out.println(name + " [" + getStatus() + "]");
+        System.out.print(name + " [" + getStatus() + "]");
         if (!Objects.equals(getDescription(), "")) {
-            System.out.println(description);
+            System.out.print(description);
+        }
+        if (startTime != null) {
+            DateTimeFormatter dateAndTime = DateTimeFormatter.ofPattern("dd MMMM yyг. hh:mm ");
+            System.out.printf("Начало: %s| Время выполнения: %s часов|  Дедлайн: %s\n",
+                    getStartTime().format(dateAndTime),
+                    getDuration().toHours(),
+                    getEndTime().format(dateAndTime));
         }
     }
 
@@ -115,6 +158,42 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+
+    public void setTimeBound(LocalDateTime startTime, Duration duration) {
+        this.startTime = null;
+        this.duration = null;
+        setStartTime(startTime);
+        setDuration(duration);
+        for (Task task : taskManager.getPrioritizedTasks()) {
+            boolean isOverlaps = taskManager.isTimeBoundsOverlaps(startTime, duration,
+                    task.getStartTime(), task.getDuration());
+            if (isOverlaps && !(task.equals(this))) {
+                throw new NotSuitableTimeBoundException("Заданные временные рамки пересекаются" +
+                        " с временными рамками другой задачи.");
+            }
+        }
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    private void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    private void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        return getStartTime().plus(getDuration());
     }
 
     @Override

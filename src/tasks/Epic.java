@@ -1,5 +1,6 @@
 package tasks;
 
+import java.time.*;
 import java.util.HashMap;
 
 import manager.TaskManager;
@@ -62,22 +63,23 @@ public class Epic extends Task {
         }
     }
 
-    public Subtask addSubtask(String name) {
-        Subtask subtask = new Subtask(name, "", Status.NEW, taskManager, this.getId());
+    public Subtask addSubtask(String name, LocalDateTime startTime, Duration duration) {
+        Subtask subtask = new Subtask(name, "", Status.NEW, taskManager, this.getId(), startTime, duration);
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
         return subtask;
     }
 
-    public Subtask addSubtask(String name, String description) {
-        Subtask subtask = new Subtask(name, description, Status.NEW, taskManager, this.getId());
+    public Subtask addSubtask(String name, String description, LocalDateTime startTime, Duration duration) {
+        Subtask subtask = new Subtask(name, description, Status.NEW, taskManager, this.getId(), startTime, duration);
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
         return subtask;
     }
 
-    public Subtask addSubtask(String name, String description, Status status) {
-        Subtask subtask = new Subtask(name, description, status, taskManager, this.getId());
+    public Subtask addSubtask(String name, String description, Status status,
+                              LocalDateTime startTime, Duration duration) {
+        Subtask subtask = new Subtask(name, description, status, taskManager, this.getId(), startTime, duration);
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getMapOfSubtasks().put(subtask.getId(), subtask);
         return subtask;
@@ -92,4 +94,32 @@ public class Epic extends Task {
         updateStatus();
     }
 
+    @Override
+    public LocalDateTime getStartTime() {
+        LocalDateTime minStartTime = null;
+        for (Subtask value : mapOfSubtasks.values()) {
+            if (minStartTime == null || value.getStartTime().isBefore(minStartTime)) {
+                minStartTime = value.getStartTime();
+            }
+        }
+        return minStartTime;
+    }
+
+    @Override
+    public Duration getDuration() {
+        Duration sum = null;
+        for (Subtask value : mapOfSubtasks.values()) {
+            if (sum == null) {
+                sum = value.getDuration();
+                continue;
+            }
+            sum = sum.plus(value.getDuration());
+        }
+        return sum;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return getStartTime().plus(getDuration());
+    }
 }

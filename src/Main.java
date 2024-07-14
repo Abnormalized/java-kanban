@@ -1,31 +1,29 @@
-import manager.*;
-import tasks.*;
-
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.Scanner;
+import java.time.*;
+import java.util.*;
+
+import manager.*;
+import tasks.*;
 
 public class Main {
     public static void main(String[] args) {
         File file = Paths.get("data.csv").toFile();
         TaskManager manager = Managers.getFileManager(file);
-        System.out.println("Загружено:");
-        printAllTasks(manager);
+
         manualScene(manager);
     }
 
     private static void manualScene(TaskManager manager) {
-        System.out.println("Создаем задачи...");
-        manager.createTask("Task 1", "Description 1");
-        manager.createTask("Task 2", "Description 2");
-        Epic epic = manager.createEpic("Epic 1", "Description of epic 1");
-        epic.addSubtask("Subtask 1", "Description of subtask 1");
-        epic.addSubtask("Subtask 2", "Description of subtask 2");
-        epic.addSubtask("Subtask 3", "Description of subtask 3");
-        manager.createEpic("Epic 2", "Description of epic 2");
+        Task task1 = manager.createTask("1", LocalDateTime.now(), Duration.ofDays(2));
+        Epic epic = manager.createEpic("Epic");
+        manager.createSubtask(epic, "sub1", task1.getEndTime(), Duration.ofDays(1));
+        manager.createSubtask(epic, "sub2", task1.getEndTime().plus(Duration.ofDays(1)), Duration.ofDays(2));
+        Task task3 = manager.createTask("3", epic.getEndTime(), Duration.ofDays(2));
+        Task task4 = manager.createTask("4", task3.getEndTime(), Duration.ofDays(1));
+
+        System.out.println(manager.getPrioritizedTasks());
         printAllTasks(manager);
-        showHistory(manager);
     }
 
     private static void testMenu(TaskManager manager) {
@@ -40,7 +38,7 @@ public class Main {
 
             if (Objects.equals(command, "1")) {
                 System.out.println("Введите имя задачи");
-                manager.createTask(scanner.nextLine());
+                manager.createTask(scanner.nextLine(), LocalDateTime.now(), Duration.ofSeconds(1));
             } else if (Objects.equals(command, "2")) {
                 System.out.print("Введите id задачи: ");
                 manager.getMapOfTasks().get(scanner.nextLong()).show();
