@@ -2,10 +2,10 @@ package manager;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import tasks.Epic;
-import tasks.Task;
-
+import java.time.*;
 import java.util.List;
+
+import tasks.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void tasksAddsIntoHistory() {
         TaskManager manager = Managers.getDefault();
-        Task task = manager.createTask("Test");
+        Task task = manager.createTask("Test",
+                LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(1));
         task.show();
         Assertions.assertTrue(manager.getHistoryManager().getHistory().contains(task));
     }
@@ -25,15 +26,17 @@ class InMemoryHistoryManagerTest {
 
         int numberOfTasks = 30 * 3;
 
-        for (int i = 0; i < numberOfTasks/3; i++) {
-            manager.createTask("Task " + i);
+        for (int i = 0; i < numberOfTasks / 3; i++) {
+            manager.createTask("Task " + i,
+                    LocalDateTime.of(2024 + i, 1, 1, 1, 00), Duration.ofHours(10));
         }
-        for (int i = 0; i < numberOfTasks/3; i++) {
+        for (int i = 0; i < numberOfTasks / 3; i++) {
             manager.createEpic("Epic " + i);
         }
         Epic epic = manager.createEpic("Epic for subtasks");
-        for (int i = 0; i < numberOfTasks/3; i++) {
-            epic.addSubtask("Sub " + i);
+        for (int i = 0; i < numberOfTasks / 3; i++) {
+            epic.addSubtask("Sub " + i,
+                    LocalDateTime.of(2024 + i, 3, 1, 1, 00), Duration.ofHours(10));
         }
         for (int i = 0; i < 2; i++) {
             for (Long id : manager.getMapOfTasks().keySet()) {
@@ -49,7 +52,8 @@ class InMemoryHistoryManagerTest {
         TaskManager manager = Managers.getDefault();
 
         for (int i = 0; i < 3; i++) {
-            manager.createTask("Task " + i);
+            manager.createTask("Task " + i,
+                    LocalDateTime.of(2024, 1, 1, 10 + i, 00), Duration.ofHours(1));
         }
 
         int targetId = 0;
@@ -69,9 +73,10 @@ class InMemoryHistoryManagerTest {
         TaskManager manager = Managers.getDefault();
 
         for (int i = 0; i < 5; i++) {
-            manager.createTask("Task " + i);
+            manager.createTask("Task " + i,
+                    LocalDateTime.of(2024, 1, 1, 10 + i, 00), Duration.ofHours(1));
         }
-        int[] requestOrder = {3, 2, 4 ,1 ,0};
+        int[] requestOrder = {3, 2, 4, 1, 0};
         int[] invertedOrder = {0, 1, 4, 2, 3};
 
         for (int i = 0; i < requestOrder.length; i++) {
@@ -89,5 +94,25 @@ class InMemoryHistoryManagerTest {
 
         assertTrue(test, "метод getHistory класса HistoryManager возвращает задачи не в порядке " +
                 "последовательности запросов к ним.");
+    }
+
+    @Test
+    void historyManagerClears() {
+        TaskManager manager = Managers.getDefault();
+
+        for (int i = 0; i < 5; i++) {
+            manager.createTask("Task " + i,
+                    LocalDateTime.of(2024, 1, 1, 10 + i, 00), Duration.ofHours(1));
+        }
+        int[] requestOrder = {3, 2, 4, 1, 0};
+        int[] invertedOrder = {0, 1, 4, 2, 3};
+
+        for (int i = 0; i < requestOrder.length; i++) {
+            manager.getTaskById(requestOrder[i]).show();
+        }
+
+        manager.getHistoryManager().clear();
+
+        assertEquals(0, manager.getHistoryManager().getHistory().size());
     }
 }

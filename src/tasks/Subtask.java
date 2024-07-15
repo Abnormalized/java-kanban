@@ -1,21 +1,24 @@
 package tasks;
 
+import java.time.*;
+
 import manager.TaskManager;
 
 public class Subtask extends Task {
 
     final long epicId;
 
-    public Subtask(String name, String description, Status status, TaskManager taskManager, long epicId) {
-        super(name, description, status, taskManager);
+    public Subtask(String name, String description, Status status,
+                   TaskManager taskManager, long epicId, LocalDateTime startTime, Duration duration) {
+        super(name, description, status, taskManager, startTime, duration);
         this.type = Type.SUBTASK;
         this.epicId = epicId;
         this.setStatus(status);
     }
 
-    protected Subtask(long id, Type type, String name, Status status, String description,
-                      long epicId, TaskManager taskManager) {
-        super(id, Type.TASK, name, status, description, taskManager);
+    protected Subtask(long id, String name, Status status, String description,
+                      long epicId, TaskManager taskManager, LocalDateTime startTime, Duration duration) {
+        super(id, Type.SUBTASK, name, status, description, taskManager, startTime, duration);
         this.epicId = epicId;
     }
 
