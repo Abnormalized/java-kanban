@@ -7,12 +7,6 @@ import tasks.*;
 
 public interface TaskManager {
 
-    List<Task> getTaskList();
-
-    List<Epic> getEpicList();
-
-    List<Subtask> getSubtaskList();
-
     long assignId();
 
     long getNextFreeId();
@@ -42,6 +36,12 @@ public interface TaskManager {
                           Status status, LocalDateTime startTime, Duration duration);
 
     HashMap<Long, Task> getMapOfTasks();
+
+    List<Task> getTaskList();
+
+    List<Epic> getEpicList();
+
+    List<Subtask> getSubtaskList();
 
     Task getTaskById(long id);
 

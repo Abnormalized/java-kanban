@@ -6,14 +6,14 @@ import com.google.gson.stream.*;
 import com.sun.net.httpserver.*;
 import java.lang.reflect.Type;
 import java.io.InputStream;
-
-import manager.TaskManager;
 import com.google.gson.*;
-import java.time.*;
+
 import java.time.format.DateTimeFormatter;
+import java.time.*;
 import java.util.*;
 import java.io.*;
 
+import manager.TaskManager;
 import tasks.*;
 
 public abstract class BaseHttpHandler implements HttpHandler {
@@ -324,15 +324,12 @@ public abstract class BaseHttpHandler implements HttpHandler {
         @Override
         public Task deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
                 throws JsonParseException {
-
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-
             String name = jsonObject.get("name").getAsString();
             String description = jsonObject.get("description").getAsString();
             Status status = context.deserialize(jsonObject.get("status"), Status.class);
             LocalDateTime startTime = context.deserialize(jsonObject.get("startTime"), LocalDateTime.class);
             Duration duration = context.deserialize(jsonObject.get("durationInHours"), Duration.class);
-
             return new Task(name, description, status, taskManager, startTime, duration);
         }
     }
@@ -345,7 +342,6 @@ public abstract class BaseHttpHandler implements HttpHandler {
             int subsCount = epic.getMapOfSubtasks().size();
             JsonElement subsList = JsonParser.parseString(Integer.toString(subsCount));
             String typeName = type.getTypeName().split("\\.")[1];
-
             response.addProperty("id", epic.getId());
             response.addProperty("type", typeName);
             response.add("status", context.serialize(epic.getStatus()));
@@ -356,23 +352,18 @@ public abstract class BaseHttpHandler implements HttpHandler {
             response.add("subtasksCount", subsList);
             return response;
         }
-
     }
 
     public static class EpicDeserializer implements JsonDeserializer<Epic> {
         @Override
         public Epic deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
                 throws JsonParseException {
-
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-
             String name = jsonObject.get("name").getAsString();
             String description = jsonObject.get("description").getAsString();
-            Status status = context.deserialize(jsonObject.get("Status"), Status.class);
-
+            Status status = context.deserialize(jsonObject.get("status"), Status.class);
             return new Epic(name, description, status, taskManager);
         }
-
     }
 
     static class SubtaskSerializer implements JsonSerializer<Subtask> {
@@ -397,9 +388,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
         @Override
         public Subtask deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
                 throws JsonParseException {
-
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-
             String name = jsonObject.get("name").getAsString();
             String description = jsonObject.get("description").getAsString();
             Status status = context.deserialize(jsonObject.get("status"), Status.class);

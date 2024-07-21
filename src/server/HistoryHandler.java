@@ -1,16 +1,11 @@
 package server;
 
-import com.google.gson.*;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import tasks.Epic;
-import tasks.Status;
-import tasks.Subtask;
-import tasks.Task;
-
+import com.sun.net.httpserver.*;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import com.google.gson.*;
+import java.time.*;
+
+import tasks.*;
 
 public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
 
@@ -39,21 +34,21 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     void getParticularTask(HttpExchange exchange, long id) throws IOException {
-
+        sendBadRequest(exchange);
     }
 
     @Override
     void createNewTaskRequest(HttpExchange exchange) throws IOException {
-
+        sendBadRequest(exchange);
     }
 
     @Override
     void updateExistTaskRequest(HttpExchange exchange, Long id) throws IOException {
-
+        sendBadRequest(exchange);
     }
 
     @Override
-    void handleDeleteRequest(HttpExchange exchange) {
-
+    void handleDeleteRequest(HttpExchange exchange) throws IOException {
+        sendBadRequest(exchange);
     }
 }

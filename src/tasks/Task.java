@@ -2,20 +2,18 @@ package tasks;
 
 import com.google.gson.annotations.SerializedName;
 import exception.TimeOverlapException;
-import manager.FileBackedTaskManager;
-import manager.TaskManager;
-
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Objects;
+import java.time.*;
+
+import manager.*;
 
 public class Task {
 
     private long id;
     protected Type type;
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
     private Status status;
     protected LocalDateTime startTime;
     @SerializedName("durationInHours")
@@ -63,7 +61,9 @@ public class Task {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status=" + status +
+                ", status=" + status + '\'' +
+                ", startTime=" + startTime + '\'' +
+                ", duration=" + duration +
                 '}';
     }
 
@@ -120,10 +120,6 @@ public class Task {
         this.id = id;
     }
 
-    public void setNewId(TaskManager taskManager) {
-        this.id = taskManager.assignId();
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -136,16 +132,8 @@ public class Task {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setTimeBound(TaskManager taskManager, LocalDateTime startTime,

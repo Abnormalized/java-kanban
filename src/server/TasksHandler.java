@@ -4,9 +4,7 @@ import com.sun.net.httpserver.*;
 import java.util.*;
 import java.io.*;
 
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 public class TasksHandler extends BaseHttpHandler implements HttpHandler {
 

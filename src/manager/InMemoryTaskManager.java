@@ -1,10 +1,10 @@
 package manager;
 
 import exception.TimeOverlapException;
-import tasks.*;
-
 import java.time.*;
 import java.util.*;
+
+import tasks.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -41,7 +41,6 @@ public class InMemoryTaskManager implements TaskManager {
         return nextFreeId;
     }
 
-
     @Override
     public void updateTask(Task oldTask, Task newTask) {
         long id = oldTask.getId();
@@ -73,8 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createTask(String name, String description, LocalDateTime startTime,
-                           Duration duration) {
+    public Task createTask(String name, String description, LocalDateTime startTime, Duration duration) {
         return createTask(name, description, Status.NEW, startTime, duration);
     }
 
@@ -106,8 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Subtask createSubtask(Epic epicOfThisSubtask, String name, LocalDateTime startTime,
-                                 Duration duration) {
+    public Subtask createSubtask(Epic epicOfThisSubtask, String name, LocalDateTime startTime, Duration duration) {
         return createSubtask(epicOfThisSubtask, name, "", Status.NEW, startTime, duration);
     }
 
@@ -200,7 +197,6 @@ public class InMemoryTaskManager implements TaskManager {
                                         LocalDateTime secondTaskStartDate, Duration secondTaskDuration) {
         LocalDateTime firstTaskEndDate = firstTaskStartDate.plus(firstTaskDuration);
         LocalDateTime secondTaskEndDate = secondTaskStartDate.plus(secondTaskDuration);
-
         return ((firstTaskStartDate.isBefore(secondTaskEndDate)) && (secondTaskStartDate.isBefore(firstTaskEndDate))) ||
                 (secondTaskStartDate.isBefore(firstTaskEndDate)) && (firstTaskStartDate.isBefore(secondTaskEndDate));
     }

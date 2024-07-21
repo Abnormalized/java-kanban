@@ -1,17 +1,13 @@
 package server;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import tasks.*;
+import com.google.gson.*;
+import com.sun.net.httpserver.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.io.*;
+import java.time.*;
+import java.util.*;
+
+import tasks.*;
 
 public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
 
@@ -53,6 +49,7 @@ public class EpicsHandler extends BaseHttpHandler implements HttpHandler {
 
     @Override
     void updateExistTaskRequest(HttpExchange exchange, Long id) throws IOException {
+        sendBadRequest(exchange);
     }
 
     @Override

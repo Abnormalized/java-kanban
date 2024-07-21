@@ -1,15 +1,10 @@
 package server;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import com.sun.net.httpserver.*;
+import java.io.*;
+import java.util.*;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import tasks.*;
 
 public class SubtasksHandler extends BaseHttpHandler implements HttpHandler {
 

@@ -1,13 +1,13 @@
 package tasks;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.*;
 import java.util.HashMap;
 
-import com.google.gson.annotations.SerializedName;
 import manager.TaskManager;
 
 public class Epic extends Task {
-
     @SerializedName("subtasks")
     HashMap<Long, Subtask> mapOfSubtasks;
     protected Type type;
@@ -21,7 +21,6 @@ public class Epic extends Task {
 
     protected Epic(long id, Type type, String name, Status status, String description, TaskManager taskManager) {
         super(id, type, name, status, description);
-        this.type = Type.EPIC;
         mapOfSubtasks = new HashMap<>();
         setStatus(taskManager, Status.NEW);
     }
@@ -53,14 +52,6 @@ public class Epic extends Task {
         setStatus(taskManager, Status.DONE);
     }
 
-    public Subtask addSubtask(TaskManager taskManager, Subtask subtask) {
-        taskManager.getMapOfTasks().put(subtask.getId(), subtask);
-        getMapOfSubtasks().put(subtask.getId(), subtask);
-        getEndTime();
-        updateStatus(taskManager);
-        return subtask;
-    }
-
     public Subtask addSubtask(TaskManager taskManager, String name, LocalDateTime startTime, Duration duration) {
         Subtask subtask = new Subtask(name, "", Status.NEW, taskManager, this.getId(), startTime, duration);
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
@@ -69,7 +60,8 @@ public class Epic extends Task {
         return subtask;
     }
 
-    public Subtask addSubtask(TaskManager taskManager, String name, String description, LocalDateTime startTime, Duration duration) {
+    public Subtask addSubtask(TaskManager taskManager, String name, String description,
+                              LocalDateTime startTime, Duration duration) {
         Subtask subtask = new Subtask(name, description, Status.NEW, taskManager, this.getId(), startTime, duration);
         taskManager.getMapOfTasks().put(subtask.getId(), subtask);
         getEndTime();
@@ -88,11 +80,6 @@ public class Epic extends Task {
 
     public HashMap<Long, Subtask> getMapOfSubtasks() {
         return mapOfSubtasks;
-    }
-
-    public void setSubtaskStatus(TaskManager taskManager, Status status, Subtask subtask) {
-        subtask.setStatus(taskManager, status);
-        updateStatus(taskManager);
     }
 
     @Override
