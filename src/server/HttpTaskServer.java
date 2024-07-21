@@ -8,7 +8,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Paths;
 
 public class HttpTaskServer {
-    static final private int PORT = 8080;
+    private final static int PORT = 8080;
     static HttpServer server;
     static TaskManager taskManager = Managers.getFileManager(Paths.get("data.csv").toFile());
 
