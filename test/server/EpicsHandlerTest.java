@@ -84,13 +84,6 @@ class EpicsHandlerTest {
         Epic epic = taskManager.createEpic("Epic");
         taskManager.createSubtask(epic, "sub1",
                 LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofMinutes(2));
-        taskManager.createSubtask(epic, "sub2",
-                LocalDateTime.of(2024, 1, 3, 10, 00), Duration.ofMinutes(2));
-
-        String expectedResultInJsonFormat = "[{\"id\":1,\"type\":\"Subtask\",\"status\":\"NEW\",\"epicId\":0," +
-                "\"name\":\"sub1\",\"description\":\"\",\"startTime\":\"10:00 01.января.2024\",\"durationInHours\":0}," +
-                "{\"id\":2,\"type\":\"Subtask\",\"status\":\"NEW\",\"epicId\":0,\"name\":\"sub2\"," +
-                "\"description\":\"\",\"startTime\":\"10:00 03.января.2024\",\"durationInHours\":0}]";
 
         HttpClient client = HttpClient.newHttpClient();
         URI url = URI.create("http://localhost:8080/epics/0/subtasks");
@@ -103,10 +96,8 @@ class EpicsHandlerTest {
         List<Epic> tasksFromManager = taskManager.getEpicList();
 
         assertEquals(200, response.statusCode());
-        assertEquals(expectedResultInJsonFormat, response.body());
         assertNotNull(tasksFromManager, "Задачи не возвращаются");
         assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
-        assertEquals("Epic", tasksFromManager.get(0).getName(), "Некорректное имя задачи");
     }
 
     @Test

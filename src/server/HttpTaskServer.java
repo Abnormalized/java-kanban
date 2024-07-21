@@ -14,8 +14,6 @@ public class HttpTaskServer {
 
     public static void main(String[] args) throws InterruptedException {
         start();
-
-
     }
 
     public static void start() {
