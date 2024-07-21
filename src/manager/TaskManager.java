@@ -7,9 +7,19 @@ import tasks.*;
 
 public interface TaskManager {
 
+    List<Task> getTaskList();
+
+    List<Epic> getEpicList();
+
+    List<Subtask> getSubtaskList();
+
     long assignId();
 
     long getNextFreeId();
+
+    void updateTask(Task oldTask, Task newTask);
+
+    void updateSubtask(Subtask oldSubtask, Subtask newSubtask);
 
     Task createTask(String name, LocalDateTime startTime, Duration duration);
 

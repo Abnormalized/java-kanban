@@ -16,7 +16,7 @@ class InMemoryHistoryManagerTest {
         TaskManager manager = Managers.getDefault();
         Task task = manager.createTask("Test",
                 LocalDateTime.of(2024, 1, 1, 10, 00), Duration.ofHours(1));
-        task.show();
+        manager.getTaskById(task.getId());
         Assertions.assertTrue(manager.getHistoryManager().getHistory().contains(task));
     }
 
@@ -35,12 +35,13 @@ class InMemoryHistoryManagerTest {
         }
         Epic epic = manager.createEpic("Epic for subtasks");
         for (int i = 0; i < numberOfTasks / 3; i++) {
-            epic.addSubtask("Sub " + i,
+            epic.addSubtask(manager, "Sub " + i,
                     LocalDateTime.of(2024 + i, 3, 1, 1, 00), Duration.ofHours(10));
         }
         for (int i = 0; i < 2; i++) {
             for (Long id : manager.getMapOfTasks().keySet()) {
-                manager.getMapOfTasks().get(id).show();
+                manager.getTaskById(id);
+
             }
         }
         assertEquals((numberOfTasks + 1), manager.getHistoryManager().getHistory().size(),
@@ -80,7 +81,9 @@ class InMemoryHistoryManagerTest {
         int[] invertedOrder = {0, 1, 4, 2, 3};
 
         for (int i = 0; i < requestOrder.length; i++) {
-            manager.getTaskById(requestOrder[i]).show();
+
+            manager.getTaskById(manager.getTaskById(requestOrder[i]).getId());
+
         }
         List<Task> historyList = manager.getHistoryManager().getHistory();
         boolean test = true;
@@ -108,7 +111,7 @@ class InMemoryHistoryManagerTest {
         int[] invertedOrder = {0, 1, 4, 2, 3};
 
         for (int i = 0; i < requestOrder.length; i++) {
-            manager.getTaskById(requestOrder[i]).show();
+            manager.getTaskById(manager.getTaskById(requestOrder[i]).getId());
         }
 
         manager.getHistoryManager().clear();

@@ -1,67 +1,65 @@
 package tasks;
 
+import com.google.gson.annotations.SerializedName;
+import com.sun.source.util.Trees;
 import exception.TimeOverlapException;
 import manager.FileBackedTaskManager;
 import manager.TaskManager;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.format.*;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Task {
 
+    private long id;
     protected Type type;
-    private final long id;
     private String name;
     private String description;
     private Status status;
-    private LocalDateTime startTime;
-    private Duration duration;
-    public final TaskManager taskManager;
+    protected LocalDateTime startTime;
+    @SerializedName("durationInHours")
+    protected Duration duration;
 
     public Task(String name, String description, Status status, TaskManager taskManager) {
         this.name = name;
         this.description = description;
-        this.taskManager = taskManager;
         this.id = taskManager.assignId();
         this.status = status;
         this.type = Type.TASK;
     }
 
     public Task(String name, String description, Status status, TaskManager taskManager,
-                LocalDateTime startTime, Duration duration) {
+                LocalDateTime startTime, Duration duration) throws TimeOverlapException {
+        setTimeBound(taskManager, startTime, duration);
         this.name = name;
         this.description = description;
-        this.taskManager = taskManager;
         this.id = taskManager.assignId();
         this.status = status;
         this.type = Type.TASK;
-        setTimeBound(startTime, duration);
     }
 
     protected Task(long id, Type type, String name, Status status, String description,
-                   TaskManager taskManager, LocalDateTime startTime, Duration duration) {
+                   TaskManager taskManager, LocalDateTime startTime, Duration duration) throws TimeOverlapException {
+        setTimeBound(taskManager, startTime, duration);
         this.id = id;
         this.type = type;
         this.name = name;
         this.status = status;
         this.description = description;
-        this.taskManager = taskManager;
-        taskManager.getMapOfTasks().put(id, this);
-        setTimeBound(startTime, duration);
     }
 
-    protected Task(long id, Type type, String name, Status status, String description,
-                   TaskManager taskManager) {
+    protected Task(long id, Type type, String name, Status status, String description) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.status = status;
         this.description = description;
-        this.taskManager = taskManager;
-        taskManager.getMapOfTasks().put(id, this);
     }
 
     @Override
@@ -76,10 +74,11 @@ public class Task {
 
     public String toStringForSave() {
         if (getStartTime() != null) {
-            return String.format(String.format("%s,%s,%s,%s,%s,%s,%s", id, type, name, status, description,
-                    getStartTime().toString(), getDuration().toString()));
+            return String.format(String.format("%s,%s,%s,%s,%s,%s,%s", id, this.getClass().toString().split("\\.")[1],
+                    name, status, description, getStartTime().toString(), getDuration().toString()));
         } else {
-            return String.format(String.format("%s,%s,%s,%s,%s,,", id, type, name, status, description));
+            return String.format(String.format("%s,%s,%s,%s,%s,,", id, this.getClass().toString().split("\\.")[1],
+                    name, status, description));
         }
     }
 
@@ -93,23 +92,24 @@ public class Task {
         Duration duration = Duration.parse(data[6]);
 
         switch (data[1]) {
-            case "TASK" -> {
+            case "Task" -> {
                 Task task = new Task(Long.parseLong(id), Type.TASK, name, Status.toStatus(status),
                         description, taskManager, startTime, duration);
                 taskManager.getMapOfTasks().put(task.getId(), task);
+                taskManager.getTaskList().add(task);
             }
-            case "EPIC" -> {
+            case "Epic" -> {
                 Epic epic = new Epic(Long.parseLong(id), Type.EPIC, name, Status.toStatus(status),
                         description, taskManager);
                 taskManager.getMapOfTasks().put(epic.getId(), epic);
+                taskManager.getEpicList().add(epic);
             }
-            case "SUBTASK" -> {
+            case "Subtask" -> {
                 var epicId = data[data.length - 1];
                 Subtask subtask = new Subtask(Long.parseLong(id), name, Status.toStatus(status),
                         description, Long.parseLong(epicId), taskManager, startTime, duration);
                 taskManager.getMapOfTasks().put(subtask.getId(), subtask);
-                Epic epic = (Epic) taskManager.getTaskById(Long.parseLong(epicId));
-                epic.getMapOfSubtasks().put(subtask.getId(), subtask);
+                taskManager.getSubtaskList().add(subtask);
             }
             default -> {
                 throw new IOException("Ошибка чтения файла! Возможно, файл поврежден.");
@@ -117,30 +117,23 @@ public class Task {
         }
     }
 
-    public void show() {
-        taskManager.getHistoryManager().add(this);
-        System.out.print(name + " [" + getStatus() + "]");
-        if (!Objects.equals(getDescription(), "")) {
-            System.out.print(description);
-        }
-        if (startTime != null) {
-            DateTimeFormatter dateAndTime = DateTimeFormatter.ofPattern("dd MMMM yyг. hh:mm ");
-            System.out.printf("Начало: %s| Время выполнения: %s часов|  Дедлайн: %s\n",
-                    getStartTime().format(dateAndTime),
-                    getDuration().toHours(),
-                    getEndTime().format(dateAndTime));
-        }
-    }
-
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setNewId(TaskManager taskManager) {
+        this.id = taskManager.assignId();
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(TaskManager taskManager, Status status) {
         this.status = status;
     }
 
@@ -160,13 +153,16 @@ public class Task {
         this.description = description;
     }
 
-
-    public void setTimeBound(LocalDateTime startTime, Duration duration) {
+    public void setTimeBound(TaskManager taskManager, LocalDateTime startTime,
+                             Duration duration) throws TimeOverlapException {
         this.startTime = null;
         this.duration = null;
         setStartTime(startTime);
         setDuration(duration);
         for (Task task : taskManager.getPrioritizedTasks()) {
+            if (task instanceof Epic) {
+                continue;
+            }
             boolean isOverlaps = taskManager.isTimeBoundsOverlaps(startTime, duration,
                     task.getStartTime(), task.getDuration());
             if (isOverlaps && !(task.equals(this))) {
@@ -180,7 +176,7 @@ public class Task {
         return startTime;
     }
 
-    private void setStartTime(LocalDateTime startTime) {
+    protected void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
@@ -188,7 +184,7 @@ public class Task {
         return duration;
     }
 
-    private void setDuration(Duration duration) {
+    protected void setDuration(Duration duration) {
         this.duration = duration;
     }
 
@@ -201,8 +197,9 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
-                status == task.status && Objects.equals(taskManager, task.taskManager);
+        return id == task.id && Objects.equals(name, task.name)
+                && Objects.equals(description, task.description) && status == task.status
+                && Objects.equals(startTime, task.startTime) && Objects.equals(duration, task.duration);
     }
 
     @Override

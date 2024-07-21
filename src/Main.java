@@ -1,17 +1,24 @@
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.*;
-import java.util.*;
 
 import manager.*;
 import tasks.*;
 
 public class Main {
     public static void main(String[] args) {
-        File file = Paths.get("data.csv").toFile();
-        TaskManager manager = Managers.getFileManager(file);
+//        File file = Paths.get("data.csv").toFile();
+//        TaskManager manager = Managers.getFileManager(file);
+//
+//        manualScene(manager);
 
-        manualScene(manager);
+        TaskManager taskManager = Managers.getDefault();
+        Task task = taskManager.createTask("qwe", LocalDateTime.now(), Duration.ofHours(1));
+        Epic epic = taskManager.createEpic("test");
+        Subtask subtask = taskManager.createSubtask(epic, "ta", LocalDateTime.now().plus(Duration.ofHours(1)), Duration.ofHours(1));
+
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        System.out.println(taskManager.getHistoryManager().getHistory());
     }
 
     private static void manualScene(TaskManager manager) {
@@ -23,31 +30,6 @@ public class Main {
         Task task4 = manager.createTask("4", task3.getEndTime(), Duration.ofDays(1));
 
         System.out.println(manager.getPrioritizedTasks());
-        printAllTasks(manager);
-    }
-
-    private static void testMenu(TaskManager manager) {
-        while (true) {
-            System.out.println("1) Создать задачу");
-            System.out.println("2) Посмотреть задачу по ид");
-            System.out.println("3) Посмотреть историю задач");
-            System.out.println("0) exit");
-            Scanner scanner = new Scanner(System.in);
-
-            String command = scanner.nextLine();
-
-            if (Objects.equals(command, "1")) {
-                System.out.println("Введите имя задачи");
-                manager.createTask(scanner.nextLine(), LocalDateTime.now(), Duration.ofSeconds(1));
-            } else if (Objects.equals(command, "2")) {
-                System.out.print("Введите id задачи: ");
-                manager.getMapOfTasks().get(scanner.nextLong()).show();
-            } else if (Objects.equals(command, "3")) {
-                showHistory(manager);
-            } else if (Objects.equals(command, "0")) {
-                System.exit(0);
-            }
-        }
     }
 
     private static void showHistory(TaskManager manager) {
@@ -57,10 +39,4 @@ public class Main {
         }
     }
 
-    private static void printAllTasks(TaskManager manager) {
-        System.out.println("Задачи:");
-        for (Task task : manager.getMapOfTasks().values()) {
-            task.show();
-        }
-    }
 }
