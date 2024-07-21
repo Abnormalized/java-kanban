@@ -5,6 +5,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
+import java.util.*;
 
 import tasks.*;
 
@@ -30,9 +31,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             writer.write("Next_free_id:" + getNextFreeId() + ";");
             writer.newLine();
             writer.write("id,type,name,status,description,epicId,startTime,duration;");
-            for (Long id : getMapOfTasks().keySet()) {
+            List<Task> saveQueue = new ArrayList<>(getMapOfTasks().values());
+            saveQueue.sort(Comparator.comparing(Task::toString));
+            for (Task task : saveQueue) {
                 writer.newLine();
-                writer.write(getMapOfTasks().get(id).toStringForSave() + ";");
+                writer.write(task.toStringForSave() + ";");
             }
         } catch (IOException exception) {
             System.out.println("Ошибка: Не удалось сохранить данные.");
@@ -61,6 +64,37 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
+    public List<Task> getTaskList() {
+        save();
+        return taskList;
+    }
+
+    @Override
+    public List<Epic> getEpicList() {
+        save();
+        return epicList;
+    }
+
+    @Override
+    public List<Subtask> getSubtaskList() {
+        save();
+        return subtaskList;
+    }
+
+    @Override
+    public void updateTask(Task oldTask, Task newTask) {
+        super.updateTask(oldTask, newTask);
+        save();
+    }
+
+    @Override
+    public void updateSubtask(Subtask oldSubtask, Subtask newSubtask) {
+        super.updateSubtask(oldSubtask, newSubtask);
+        save();
+    }
+
+
+    @Override
     public Task createTask(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
         Task task = super.createTask(name, description, status, startTime, duration);
         save();
@@ -83,6 +117,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
+    public Task getTaskById(long id) {
+        Task task = super.getTaskById(id);
+        save();
+        return task;
+    }
+
+    @Override
     public void deleteTaskById(long id) {
         super.deleteTaskById(id);
         save();
@@ -98,4 +139,3 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         this.nextFreeId = nextFreeId;
     }
 }
-

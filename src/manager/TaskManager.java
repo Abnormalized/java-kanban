@@ -11,6 +11,10 @@ public interface TaskManager {
 
     long getNextFreeId();
 
+    void updateTask(Task oldTask, Task newTask);
+
+    void updateSubtask(Subtask oldSubtask, Subtask newSubtask);
+
     Task createTask(String name, LocalDateTime startTime, Duration duration);
 
     Task createTask(String name, String description, LocalDateTime startTime, Duration duration);
@@ -32,6 +36,12 @@ public interface TaskManager {
                           Status status, LocalDateTime startTime, Duration duration);
 
     HashMap<Long, Task> getMapOfTasks();
+
+    List<Task> getTaskList();
+
+    List<Epic> getEpicList();
+
+    List<Subtask> getSubtaskList();
 
     Task getTaskById(long id);
 

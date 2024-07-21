@@ -1,11 +1,8 @@
 package manager;
 
-import tasks.Task;
 import java.util.List;
 
-
-// Менеджер отвечающий исключительно за историю последних задач.
-
+import tasks.Task;
 
 public interface HistoryManager {
 
@@ -16,5 +13,4 @@ public interface HistoryManager {
     void clear();
 
     List<Task> getHistory();
-
 }
